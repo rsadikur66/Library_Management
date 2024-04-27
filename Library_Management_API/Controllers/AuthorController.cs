@@ -9,7 +9,6 @@ namespace Library_Management_API.Controllers
 {
     public class AuthorController : Controller
     {
-        //private readonly Library_Management_SystemContext _dbContext;
         private readonly IAuthor _author_repository;
         public AuthorController(IAuthor author_repo)
         {
