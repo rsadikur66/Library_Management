@@ -12,6 +12,9 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAuthor, AuthorRepository>();
+builder.Services.AddScoped<IBook, BookRepository>(); 
+builder.Services.AddScoped<IMember,MemberRepository>();
+builder.Services.AddScoped<IBorrowedBook, BorrowedBookRepository>();
 
 var app = builder.Build();
 

@@ -1,42 +1,39 @@
 ﻿using Library_Management_API.Models;
-using Library_Management_API.Repository.implementation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Net.Http;
 
 namespace Library_Management_API.Controllers
 {
-    public class AuthorController : Controller
+    public class BorrowedBookController : Controller
     {
-        private readonly IAuthor _author_repository;
-        public AuthorController(IAuthor author_repo)
+        private readonly IBorrowedBook _borrowedBook_repository;
+        public BorrowedBookController(IBorrowedBook borrowedBook_repo)
         {
-            _author_repository = author_repo;
+            _borrowedBook_repository = borrowedBook_repo;
         }
 
-        // GET: AuthorController
-        [HttpGet(("api/Author/GetAuthorList"))]
-        public async Task<IEnumerable<Author>> GetAuthorList()
+        [HttpGet("/api/BorrowedBook/GetAllBorrowedBookList")]
+        // GET: BorrowedBookController
+        public async Task<IEnumerable<BorrowedBook>> GetAllBorrowedBookList()
         {
-            var authors = await _author_repository.GetAllAuthors();
-            return authors;
+            var borrowed_books_list = await _borrowedBook_repository.GetAllBorrowedBookList();
+            return borrowed_books_list;
+         
         }
-        
 
-        // GET: AuthorController/Details/5
+        // GET: BorrowedBookController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: AuthorController/Create
+        // GET: BorrowedBookController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AuthorController/Create
+        // POST: BorrowedBookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -51,13 +48,13 @@ namespace Library_Management_API.Controllers
             }
         }
 
-        // GET: AuthorController/Edit/5
+        // GET: BorrowedBookController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Edit/5
+        // POST: BorrowedBookController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -72,13 +69,13 @@ namespace Library_Management_API.Controllers
             }
         }
 
-        // GET: AuthorController/Delete/5
+        // GET: BorrowedBookController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Delete/5
+        // POST: BorrowedBookController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

@@ -12,13 +12,12 @@ namespace Library_Web_Front.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
         Uri baseAddress = new Uri("http://localhost:5205/api");
         private readonly HttpClient _httpClient;
         
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
+        public HomeController()
+        { 
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = baseAddress;
             
@@ -26,15 +25,15 @@ namespace Library_Web_Front.Controllers
 
         public IActionResult Index()
         {
-            List<WeatherViewModel> WeatherList = new List<WeatherViewModel>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Weather/GetWeatherDetails").Result;
+            List<AuthorViewModel> AuthorList = new List<AuthorViewModel>(); 
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Author/GetAuthorList").Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
-                WeatherList = JsonConvert.DeserializeObject<List<WeatherViewModel>>(data);
+                AuthorList = JsonConvert.DeserializeObject<List<AuthorViewModel>>(data);
             }
 
-            return View();
+            return View(AuthorList);
         }
 
         public IActionResult Privacy()

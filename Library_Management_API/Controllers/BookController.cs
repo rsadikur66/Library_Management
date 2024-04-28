@@ -1,14 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Library_Management_API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 
 namespace Library_Management_API.Controllers
 {
     public class BookController : Controller
     {
-        // GET: BookController
-        public ActionResult Index()
+        private readonly IBook  _book_repository;
+            public BookController(IBook book_repo)
         {
-            return View();
+                _book_repository = book_repo;
+        }
+        [HttpGet("api/Book/GetAllBooks")]
+        // GET: BookController
+        public async Task<IEnumerable<Book>> GetAllBooks()
+        {
+           var all_books = await _book_repository.GetAllBooks();
+            return  all_books;
         }
 
         // GET: BookController/Details/5

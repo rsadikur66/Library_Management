@@ -1,42 +1,48 @@
-﻿using Library_Management_API.Models;
-using Library_Management_API.Repository.implementation;
+﻿using Library_Web_Front.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Net.Http;
 
-namespace Library_Management_API.Controllers
+namespace Library_Web_Front.Controllers
 {
-    public class AuthorController : Controller
+    public class BookController : Controller
     {
-        private readonly IAuthor _author_repository;
-        public AuthorController(IAuthor author_repo)
+        Uri baseAddress = new Uri("http://localhost:5205/api");
+        private readonly HttpClient _httpClient;
+        public BookController()
         {
-            _author_repository = author_repo;
+                _httpClient = new HttpClient();
+            _httpClient.BaseAddress = baseAddress;
         }
 
-        // GET: AuthorController
-        [HttpGet(("api/Author/GetAuthorList"))]
-        public async Task<IEnumerable<Author>> GetAuthorList()
+        // GET: BookController
+        public ActionResult Books()
         {
-            var authors = await _author_repository.GetAllAuthors();
-            return authors;
-        }
-        
+            List<BookViewModel> BooksList = new List<BookViewModel>();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Author/GetAuthorList").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                BooksList = JsonConvert.DeserializeObject<List<BookViewModel>>(data);
+            }
 
-        // GET: AuthorController/Details/5
+            @ViewBag.Title = "Books page";
+            return View();
+        }
+
+        // GET: BookController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: AuthorController/Create
+        // GET: BookController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AuthorController/Create
+        // POST: BookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -51,13 +57,13 @@ namespace Library_Management_API.Controllers
             }
         }
 
-        // GET: AuthorController/Edit/5
+        // GET: BookController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Edit/5
+        // POST: BookController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -72,13 +78,13 @@ namespace Library_Management_API.Controllers
             }
         }
 
-        // GET: AuthorController/Delete/5
+        // GET: BookController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Delete/5
+        // POST: BookController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

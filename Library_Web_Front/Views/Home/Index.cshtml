@@ -1,12 +1,32 @@
-﻿
+﻿@model IEnumerable<Library_Web_Front.Models.AuthorViewModel>
 @{
     ViewData["Title"] = "Home Page";
 }
+<style>
+    table tr td{
+        border :1px solid black;
+    }
+</style>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center">    
+    <table style="width:100%">
+        <tr>
+            <th style="width:5%"><label>Author ID</label></th>
+            <th style="width:10%"><label>Author Name</label></th>
+            <th style="width:85%"><label>Author Bio</label></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.AuthorId</td>
+                <td>@item.AuthorName</td>
+                <td>@item.AuthorBio</td>
+            </tr>
+        }
+        <tr>
 
+        </tr>
+    </table>
     
 
 </div>

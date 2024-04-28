@@ -1,42 +1,38 @@
 ﻿using Library_Management_API.Models;
-using Library_Management_API.Repository.implementation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Net.Http;
 
 namespace Library_Management_API.Controllers
 {
-    public class AuthorController : Controller
+    public class MemberController : Controller
     {
-        private readonly IAuthor _author_repository;
-        public AuthorController(IAuthor author_repo)
+        private readonly IMember _member;
+        public MemberController(IMember member)
         {
-            _author_repository = author_repo;
+            _member = member;
         }
 
-        // GET: AuthorController
-        [HttpGet(("api/Author/GetAuthorList"))]
-        public async Task<IEnumerable<Author>> GetAuthorList()
+        // GET: MemberController
+        [HttpGet("/api/Member/GetAllMembers")]
+        public async Task<IEnumerable<Member>> GetAllMembers()
         {
-            var authors = await _author_repository.GetAllAuthors();
-            return authors;
+            var membersList = await _member.GetAllMembers();
+            return membersList;
         }
-        
 
-        // GET: AuthorController/Details/5
+        // GET: MemberController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: AuthorController/Create
+        // GET: MemberController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AuthorController/Create
+        // POST: MemberController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -51,13 +47,13 @@ namespace Library_Management_API.Controllers
             }
         }
 
-        // GET: AuthorController/Edit/5
+        // GET: MemberController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Edit/5
+        // POST: MemberController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -72,13 +68,13 @@ namespace Library_Management_API.Controllers
             }
         }
 
-        // GET: AuthorController/Delete/5
+        // GET: MemberController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: AuthorController/Delete/5
+        // POST: MemberController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
