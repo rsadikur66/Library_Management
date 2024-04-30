@@ -1,4 +1,5 @@
 ﻿using Library_Management_API.Models;
+using Library_Management_API.Repository.implementation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,86 +7,76 @@ namespace Library_Management_API.Controllers
 {
     public class MemberController : Controller
     {
-        private readonly IMember _member;
+        private readonly IMember _member_repository;
         public MemberController(IMember member)
         {
-            _member = member;
+            _member_repository = member;
         }
 
         // GET: MemberController
         [HttpGet("/api/Member/GetAllMembers")]
         public async Task<IEnumerable<Member>> GetAllMembers()
         {
-            var membersList = await _member.GetAllMembers();
+            var membersList = await _member_repository.GetAllMembers();
             return membersList;
         }
 
-        // GET: MemberController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
-        // GET: MemberController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: MemberController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("/api/Member/InsertMember")]
+        public async Task<IActionResult> InsertMember([FromBody] Member memberModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _member_repository.AddMemberAsync(memberModel);
+                return Ok("Member Created");
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
         }
 
-        // GET: MemberController/Edit/5
-        public ActionResult Edit(int id)
+
+        [HttpGet("/api/Member/GetMemberById/{MemberId}")]
+        public async Task<Member> GetMemberById(int MemberId)
         {
-            return View();
+            var memberDetails = await _member_repository.GetMemberByIdAsync(MemberId);
+            return memberDetails;
         }
 
-        // POST: MemberController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: MemberController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: MemberController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpPut("/api/Member/EditMember")]
+        public async Task<IActionResult> EditMember([FromBody] Member memberModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _member_repository.UpdateMemberAsync(memberModel);
+                return Ok("Member is Updated");
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpDelete("/api/Member/DeleteMember/{id}")]
+        public async Task<IActionResult> DeleteMember(int id)
+        {
+            try
+            {
+                await _member_repository.DeleteMemberAsync(id);
+                return Ok("Member is Deleted");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

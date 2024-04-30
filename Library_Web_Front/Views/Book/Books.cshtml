@@ -1,9 +1,80 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<Library_Web_Front.Models.BookViewModel>
 
 
+<h1>Books List</h1>
 
-<h3>@ViewBag.Title</h3>
+<p style="text-align:right;margin-right:20px;">
+    <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
+</p>
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PublishedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AvailableCopies)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Isbn)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalCopies)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AuthorId)
+                </th>
+                <th></th>
+                <th>Edit Action</th>
+                <th>Details Action</th>
+                <th>Delete Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PublishedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AvailableCopies)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Isbn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalCopies)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorId)
+                    </td>
+
+                    <td>
+                    <td class="text-center">
+                        <a asp-action="Edit" class="btn btn-outline-primary" asp-route-bookId="@item.BookId">Edit</a>
+                    </td>
+                   
+                    <td class="text-center">
+                        <a asp-action="Delete" class="btn btn-outline-danger" asp-route-bookId="@item.BookId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

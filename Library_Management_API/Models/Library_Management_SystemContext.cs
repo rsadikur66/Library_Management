@@ -19,11 +19,15 @@ namespace Library_Management_API.Models
         public virtual DbSet<Author> Authors { get; set; } = null!;
         public virtual DbSet<Book> Books { get; set; } = null!;
         public virtual DbSet<BorrowedBook> BorrowedBooks { get; set; } = null!;
+        public virtual DbSet<LoginUser> LoginUsers { get; set; } = null!;
         public virtual DbSet<Member> Members { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+            if (!optionsBuilder.IsConfigured)
+            {
+
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -82,6 +86,19 @@ namespace Library_Management_API.Models
                     .WithMany(p => p.BorrowedBooks)
                     .HasForeignKey(d => d.MemberId)
                     .HasConstraintName("FK__BorrowedB__Membe__5CD6CB2B");
+            });
+
+            modelBuilder.Entity<LoginUser>(entity =>
+            {
+                entity.ToTable("LoginUser");
+
+                entity.Property(e => e.LoginPassword)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Member>(entity =>

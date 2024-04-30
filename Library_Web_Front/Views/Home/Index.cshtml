@@ -2,31 +2,59 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<style>
-    table tr td{
-        border :1px solid black;
-    }
-</style>
 
-<div class="text-center">    
-    <table style="width:100%">
-        <tr>
-            <th style="width:5%"><label>Author ID</label></th>
-            <th style="width:10%"><label>Author Name</label></th>
-            <th style="width:85%"><label>Author Bio</label></th>
-        </tr>
-        @foreach (var item in Model)
-        {
+
+<h1>Authors List</h1>
+
+<p style="text-align:right;margin-right:20px;">
+    <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
+</p>
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
             <tr>
-                <td>@item.AuthorId</td>
-                <td>@item.AuthorName</td>
-                <td>@item.AuthorBio</td>
+                <th>
+                    @Html.DisplayNameFor(model => model.AuthorId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AuthorName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AuthorBio)
+                </th>
+               
+                <th></th>
+                <th>Edit Action</th>
+                <th>Details Action</th>
+                <th>Delete Action</th>
             </tr>
-        }
-        <tr>
-
-        </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorBio)
+                    </td>
+                    
+                    <td>
+                    <td class="text-center">
+                        <a asp-action="Edit" class="btn btn-outline-primary" asp-route-authorId="@item.AuthorId">Edit</a>
+                    </td>
+                   
+                    <td class="text-center">
+                        <a asp-action="Delete" class="btn btn-outline-danger" asp-route-authorId="@item.AuthorId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
     </table>
-    
-
 </div>

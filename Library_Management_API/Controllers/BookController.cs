@@ -1,4 +1,5 @@
 ﻿using Library_Management_API.Models;
+using Library_Management_API.Repository.implementation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
@@ -12,81 +13,81 @@ namespace Library_Management_API.Controllers
         {
                 _book_repository = book_repo;
         }
-        [HttpGet("api/Book/GetAllBooks")]
-        // GET: BookController
+        [HttpGet("/api/Book/GetAllBooks")]
         public async Task<IEnumerable<Book>> GetAllBooks()
         {
            var all_books = await _book_repository.GetAllBooks();
             return  all_books;
         }
 
-        // GET: BookController/Details/5
-        public ActionResult Details(int id)
+
+
+        [HttpGet("/api/Book/GetAllAuthors")]
+        public async Task<IEnumerable<Author>> GetAllAuthors()
         {
-            return View();
+            var all_authors = await _book_repository.GetAllAuthors();
+            return all_authors;
         }
 
-        // GET: BookController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
-        // POST: BookController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("/api/Book/InsertBook")]
+        public async Task<IActionResult> InsertBook([FromBody] Book bookModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _book_repository.AddBookAsync(bookModel);
+                return Ok("Author Created");
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
         }
 
-        // GET: BookController/Edit/5
-        public ActionResult Edit(int id)
+        
+        [HttpGet("/api/Book/GetBookById/{BookId}")]
+        public async Task<Book> GetBookById(int BookId)
         {
-            return View();
+            var bookDetails = await _book_repository.GetBooksByIdAsync(BookId);
+            return bookDetails;
         }
-
-        // POST: BookController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: BookController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: BookController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        
+        [HttpPut("/api/Book/EditBook")]
+        public async Task<IActionResult> EditBook([FromBody] Book bookModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _book_repository.UpdateBookAsync(bookModel);
+                return Ok("Book is Updated");
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
         }
+
+        
+        [HttpDelete("/api/Book/DeleteBook/{id}")]
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            try
+            {
+                await _book_repository.DeleteBookAsync(id);
+                return Ok("Book is Deleted");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

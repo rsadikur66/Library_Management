@@ -1,6 +1,7 @@
 ﻿using Library_Management_API.Models;
 using Library_Web_Front.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
@@ -36,15 +37,104 @@ namespace Library_Web_Front.Controllers
             return View(AuthorList);
         }
 
-        public IActionResult Privacy()
+        public ActionResult Create()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public ActionResult Create(AuthorViewModel authorModel)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            try
+            {
+                string data = JsonConvert.SerializeObject(authorModel);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "/Author/InsertAuthor", content).Result ;
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Product Created.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View();
+            }
+            return View();
         }
+
+        [HttpGet]
+        public IActionResult Edit(int AuthorId)
+        {
+            AuthorViewModel author = new AuthorViewModel();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Author/GetAuthorById/" + AuthorId).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                author = JsonConvert.DeserializeObject<AuthorViewModel>(data);  
+            }
+            return View(author);
+        }
+
+
+        [HttpPost] 
+        public IActionResult Edit(AuthorViewModel authorModel)
+        {
+            try
+            {
+                string data = JsonConvert.SerializeObject(authorModel);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "/Author/EditAuthor", content).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Author is updated.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View();
+            }
+            return View();
+
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int AuthorId)
+        {
+            AuthorViewModel author = new AuthorViewModel();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Author/GetAuthorById/" + AuthorId).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                author = JsonConvert.DeserializeObject<AuthorViewModel>(data);
+            }
+            return View(author);
+        }
+
+        [HttpPost,ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int AuthorId)
+        {
+            try
+            {
+               
+                HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "/Author/DeleteAuthor/"+ AuthorId).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Author is Deleted.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View();
+            }
+            return View();
+
+        }
+
     }
 }

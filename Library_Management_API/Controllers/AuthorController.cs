@@ -9,6 +9,7 @@ namespace Library_Management_API.Controllers
 {
     public class AuthorController : Controller
     {
+        
         private readonly IAuthor _author_repository;
         public AuthorController(IAuthor author_repo)
         {
@@ -21,14 +22,7 @@ namespace Library_Management_API.Controllers
         {
             var authors = await _author_repository.GetAllAuthors();
             return authors;
-        }
-        
-
-        // GET: AuthorController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+        }        
 
         // GET: AuthorController/Create
         public ActionResult Create()
@@ -36,60 +30,58 @@ namespace Library_Management_API.Controllers
             return View();
         }
 
-        // POST: AuthorController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpPost("/api/Author/InsertAuthor")]
+        public async Task<IActionResult> InsertAuthor([FromBody] Author authorModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _author_repository.AddAuthorAsync(authorModel);
+                return Ok("Author Created");
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
         }
 
         // GET: AuthorController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet("/api/Author/GetAuthorById/{AuthorId}")]
+        public async Task<Author> GetAuthorById(int AuthorId)
         {
-            return View();
+            var authorDetails = await _author_repository.GetAuthorByIdAsync(AuthorId);
+            return authorDetails;
         }
-
         // POST: AuthorController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpPut("/api/Author/EditAuthor")]
+        public async Task<IActionResult> EditAuthor([FromBody] Author authorModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                await _author_repository.UpdateAuthorAsync(authorModel);
+                return Ok("Author is Updated");
 
-        // GET: AuthorController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }      
+      
 
         // POST: AuthorController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpDelete("/api/Author/DeleteAuthor/{id}")]
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _author_repository.DeleteAuthorAsync(id);
+                return Ok("Author is Deleted");
+
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
         }
     }

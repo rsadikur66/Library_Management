@@ -1,7 +1,10 @@
-﻿using Library_Web_Front.Models;
+﻿using Library_Management_API.Models;
+using Library_Management_API.Repository.implementation;
+using Library_Web_Front.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Library_Web_Front.Controllers
 {
@@ -19,84 +22,126 @@ namespace Library_Web_Front.Controllers
         public ActionResult Books()
         {
             List<BookViewModel> BooksList = new List<BookViewModel>();
-            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Author/GetAuthorList").Result;
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Book/GetAllBooks").Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
                 BooksList = JsonConvert.DeserializeObject<List<BookViewModel>>(data);
-            }
-
-            @ViewBag.Title = "Books page";
-            return View();
+            }           
+            return View(BooksList);
         }
 
-        // GET: BookController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+        
 
         // GET: BookController/Create
         public ActionResult Create()
         {
-            return View();
+            var model = new BookViewModel();
+            model.PublishedDate = null;
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Book/GetAllAuthors/").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                model.AuthorList = JsonConvert.DeserializeObject<List<AuthorViewModel>>(data);
+            }
+            // Populate AuthorList from your data source
+            //model.AuthorList = _authorRepository.GetAllAuthors(); // Example method to get all authors
+            return View(model);
+            //return View();
         }
 
-        // POST: BookController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(BookViewModel bookModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string data = JsonConvert.SerializeObject(bookModel);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = _httpClient.PostAsync(_httpClient.BaseAddress + "/Book/InsertBook", content).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Book Created.";
+                    return RedirectToAction("Books");
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["errorMessage"] = ex.Message;
                 return View();
             }
-        }
-
-        // GET: BookController/Edit/5
-        public ActionResult Edit(int id)
-        {
             return View();
         }
 
-        // POST: BookController/Edit/5
+        [HttpGet]
+        public IActionResult Edit(int BookId)
+        {
+            BookViewModel book = new BookViewModel();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Book/GetBookById/" + BookId).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                book = JsonConvert.DeserializeObject<BookViewModel>(data);
+            }
+            return View(book);
+        }
+
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Edit(BookViewModel bookModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string data = JsonConvert.SerializeObject(bookModel);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = _httpClient.PutAsync(_httpClient.BaseAddress + "/Book/EditBook", content).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Book is updated.";
+                    return RedirectToAction("Books");
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["errorMessage"] = ex.Message;
                 return View();
             }
-        }
-
-        // GET: BookController/Delete/5
-        public ActionResult Delete(int id)
-        {
             return View();
+
         }
 
-        // POST: BookController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpGet]
+        public IActionResult Delete(int BookId)
+        {
+            BookViewModel book = new BookViewModel();
+            HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/Book/GetBookById/" + BookId).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                book = JsonConvert.DeserializeObject<BookViewModel>(data);
+            }
+            return View(book);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int BookId)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "/Book/DeleteBook/" + BookId).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Book is Deleted.";
+                    return RedirectToAction("Books");
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["errorMessage"] = ex.Message;
                 return View();
             }
+            return View();
+
         }
     }
 }
